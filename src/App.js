@@ -1,14 +1,33 @@
-import { useState } from "react";
+//import { useState } from "react";
 import { Switch, Route, NavLink } from "react-router-dom";
 import Movie from "./components/Movie";
 import FavMovie from "./components/FavMovie";
+import { useDispatch, useSelector } from 'react-redux';
+import { nextMovie, addFavorite, backFirst, backMovie } from './actions/movieActions.js';
 
 function App() {
-  const [sira, setSira] = useState(0);
-  const favMovies = [];
+  //const [sira, setSira] = useState(0);
+  const movies = useSelector(store => store.movies);
+  const favMovies = useSelector(store => store.favorites);
+  const sira = useSelector(store => store.sira);
+
+  const dispatch = useDispatch();
 
   function sonrakiFilm() {
-    setSira(sira + 1);
+    dispatch(nextMovie());
+  }
+
+  function listemeEkle() {
+    dispatch(addFavorite());
+    dispatch(nextMovie());
+  }
+
+  function oncekiFilm() {
+    dispatch(backMovie());
+  }
+
+  function basaDon() {
+    dispatch(backFirst());
   }
 
   return (
@@ -23,16 +42,34 @@ function App() {
       </nav>
       <Switch>
         <Route exact path="/">
-          <Movie sira={sira} />
-
+          {!favMovies.includes(movies[sira]) ? 
+            <Movie /> 
+            :
+            <p className=" px-10 py-8 text-lg border border-red-700 text-red-700">BU FİLM LİSTEYE EKLENDİ</p>
+          }
           <div className="flex gap-3 justify-end py-3">
+            {sira > 0 && (
+              <button
+                onClick={oncekiFilm}
+                className="select-none px-4 py-2 border border-blue-700 text-blue-700 hover:border-blue-500 hover:text-blue-500">
+                Önceki
+              </button>
+            )}
+            {sira < movies.length - 1 && (
+              <button
+                onClick={sonrakiFilm}
+                className="select-none px-4 py-2 border border-blue-700 text-blue-700 hover:border-blue-500 hover:text-blue-500">
+                Sıradaki
+              </button>
+            )}
             <button
-              onClick={sonrakiFilm}
-              className="select-none px-4 py-2 border border-blue-700 text-blue-700 hover:border-blue-500 hover:text-blue-500"
-            >
-              Sıradaki
+              onClick={basaDon}
+              className="select-none px-4 py-2 border border-blue-700 text-blue-700 hover:border-blue-500 hover:text-blue-500">
+              Başa Dön
             </button>
-            <button className="select-none px-4 py-2 bg-blue-700 hover:bg-blue-600 text-white">
+            <button
+              onClick={listemeEkle}
+              className="select-none px-4 py-2 bg-blue-700 hover:bg-blue-600 text-white">
               Listeme ekle
             </button>
           </div>
