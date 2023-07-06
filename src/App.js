@@ -10,6 +10,7 @@ function App() {
   const movies = useSelector(store => store.movies);
   const favMovies = useSelector(store => store.favorites);
   const sira = useSelector(store => store.sira);
+  console.log(movies)
 
   const dispatch = useDispatch();
 
@@ -19,7 +20,12 @@ function App() {
 
   function listemeEkle() {
     dispatch(addFavorite());
-    dispatch(nextMovie());
+    if(sira === movies.length-1){
+      movies.splice(sira, 1)
+      dispatch(backFirst())
+    }else{
+      movies.splice(sira, 1)
+    }
   }
 
   function oncekiFilm() {
@@ -42,11 +48,7 @@ function App() {
       </nav>
       <Switch>
         <Route exact path="/">
-          {!favMovies.includes(movies[sira]) ? 
-            <Movie /> 
-            :
-            <p className=" px-10 py-8 text-lg border border-red-700 text-red-700">BU FİLM LİSTEYE EKLENDİ</p>
-          }
+          <Movie />
           <div className="flex gap-3 justify-end py-3">
             {sira > 0 && (
               <button
@@ -62,11 +64,13 @@ function App() {
                 Sıradaki
               </button>
             )}
+            {sira > 0 && (
             <button
               onClick={basaDon}
               className="select-none px-4 py-2 border border-blue-700 text-blue-700 hover:border-blue-500 hover:text-blue-500">
               Başa Dön
             </button>
+            )}
             <button
               onClick={listemeEkle}
               className="select-none px-4 py-2 bg-blue-700 hover:bg-blue-600 text-white">
